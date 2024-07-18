@@ -16,7 +16,7 @@ A short python script that uses multi-threading in order to extract all emails f
 
 ### Prerequisites
 
-- Install Python 3
+- Python 3
 
 ### Example Usage
 
