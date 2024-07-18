@@ -6,7 +6,7 @@ A short python script that uses multi-threading in order to extract all emails f
 
 ## Features
 
-- **Feature 1**: Gathers all email:pass credentials found in a given directory, for a specific domain
+- **Feature 1**: Gathers all email:pass credentials found in a given directory, for specific domains
 - **Feature 2**: Disgregards all duplicates and old values
 - **Feature 3**: Uses multi-threading (10 threads) to simultaneously work on extracting credentials from files
 
