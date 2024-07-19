@@ -3,6 +3,7 @@
 import os
 import threading
 import time
+import chardet
 from pathlib import Path
 from typing import Union, Set, List
 
@@ -90,10 +91,17 @@ if __name__ == '__main__':
     getDir = input("Enter directory to work on: \n")
     path = Path(getDir)
 
-    with open(old_file, "a+") as oldFile:
+    # Open the file as a raw binary to detect the encoding
+    with open(old_file, "rb") as rawFile:
+        raw_data = rawFile.read()
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
 
-        old_lines = {line.strip().lower().split(":")[0] for line in oldFile} # Retrieve all old emails
+    # Use the detected encoding to read the file and read the outdated lines
+    with open(old_file, "r", encoding=encoding) as oldFile:
+        old_lines = {line.strip().lower() for line in oldFile.readlines()}
 
+    print(f"{len(old_lines)} lines of previously found content")
     matching_lines = traverse_directory(path, domains_add)
 
     # Write matching lines to the output file
