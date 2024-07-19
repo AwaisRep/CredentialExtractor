@@ -18,12 +18,25 @@ A short python script that uses multi-threading in order to extract all emails f
 
 - Python 3
 
+### Installation
+
+1. Download/Clone from github
+2. Install the requirements using pip as such:
+
+    ```console
+    pip install requirements.txt
+    ```
+   Only chardet is required to run this program, so alternatively, you may run this command:
+
+    ```console
+    pip install chardet
+    ```
+
 ### Example Usage
 
-1. Extract the contents of the folder
-2. Modify the script to ensure you have your desired domains selected (see line 88 in main.py)
-3. Run the script as done below
-4. Examine the output file for your desired contents
+1. Modify the script to ensure you have your desired domains selected (see line 94 in main.py)
+2. Run the script as shown below
+3. Examine the output file for your desired contents
 
 
 ```console
