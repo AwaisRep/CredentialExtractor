@@ -57,7 +57,7 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
         print(f"First attempt failed for {file_path}: {e}")
 
         try:
-            with open(file_path, 'r', encoding=detect_encoding(file_path)) as file:
+            with open(file_path, 'r', encoding='latin-1') as file:
                 extract_lines(file, matching_lines, domains, count)
         
         # Log any errors upon second fail
