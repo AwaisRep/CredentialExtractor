@@ -18,7 +18,7 @@ def detect_encoding(file_path):
 
     return result["encoding"]
     
-def extract_lines(file, matching_lines, domains, count):
+def extract_lines(file, matching_lines, domains, count=0) -> int:
     lines = file.readlines()
     for line in lines:
         line = line.strip()
@@ -27,6 +27,8 @@ def extract_lines(file, matching_lines, domains, count):
         if extract_domain(email, domains): # If the email belongs to one of the domains
             count += 1
             matching_lines.add(line) # Add the credentials to the unique lines set
+    
+    return count
 
 def extract_domain(email: str, domains: Union[Set[str], List[str]]) -> bool:
     ''' Simple function to determine if an email belongs to the desired domains '''
@@ -40,7 +42,6 @@ def extract_domain(email: str, domains: Union[Set[str], List[str]]) -> bool:
 def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_lines: set) -> None:
     ''' Extract all of the relevant emails in the file with the desired domains'''
 
-    count = 0 # Tracks number of lines found in each file
     try:
         file_name = file_path.split('\\')[-1]
     except ValueError:
@@ -50,7 +51,7 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
     # First attempt at reading without an encoding lookup
     try:
         with open(file_path, 'r') as file:
-            extract_lines(file, matching_lines, domains, count)
+            count = extract_lines(file, matching_lines, domains) # Tracks number of lines found in each file
 
     # Lookup the encoding fully, before trying again
     except Exception as e:
@@ -58,7 +59,7 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
 
         try:
             with open(file_path, 'r', encoding='latin-1') as file:
-                extract_lines(file, matching_lines, domains, count)
+                count = extract_lines(file, matching_lines, domains)
         
         # Log any errors upon second fail
         except:
