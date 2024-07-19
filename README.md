@@ -17,6 +17,7 @@ A short python script that uses multi-threading in order to extract all emails f
 ### Prerequisites
 
 - Python 3
+- The program by default expects UTF-8 encoded text files, it will attempt to read any that aren't, but please note this can significantly reduce performance time
 
 ### Installation
 
@@ -34,7 +35,7 @@ A short python script that uses multi-threading in order to extract all emails f
 
 ### Example Usage
 
-1. Modify the script to ensure you have your desired domains selected (see line 94 in main.py)
+1. Modify the script to ensure you have your desired domains selected (see line 106 in main.py)
 2. Run the script as shown below
 3. Examine the output file for your desired contents
 
