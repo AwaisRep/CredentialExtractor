@@ -53,4 +53,5 @@ Whole process 2.443 seconds
 foo@bar:~$
 ```
 
-NOTE: Any errors in file handling will be written to errors.txt in the directory of where main.py is ran
+### NOTE
+- Any errors in file handling will be written to errors.txt in the directory of where main.py is ran
