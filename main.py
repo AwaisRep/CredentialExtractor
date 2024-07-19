@@ -30,7 +30,7 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
         print("File name retrieval failed.")
 
     with open(file_path, 'rb') as binaryFile:
-        fileData = binaryFile.read()
+        fileData = binaryFile.read(1024)
         contents = chardet.detect(fileData)
         encoding_file = contents['encoding']
 
