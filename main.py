@@ -19,7 +19,14 @@ def detect_encoding(file_path):
             if detector.done: 
                 break
         detector.close() 
-    return detector.result['encoding'] 
+    return detector.result['encoding']
+
+def fallback_encoding(file_path):
+    
+    with open(file_path, "rb") as rawFile:
+        rawData = rawFile.read()
+        result = chardet.detect(rawData)
+        return result['encoding']
 
 def extract_domain(email: str, domains: Union[Set[str], List[str]]) -> bool:
     ''' Simple function to determine if an email belongs to the desired domains '''
@@ -102,8 +109,12 @@ if __name__ == '__main__':
     path = Path(getDir)
 
     # Use the detected encoding to read the file and read the outdated lines
-    with open(old_file, "r", encoding=detect_encoding(old_file)) as oldFile:
-        old_lines = {line.strip().lower() for line in oldFile.readlines()}
+    try:
+        with open(old_file, "r", encoding=detect_encoding(old_file)) as oldFile:
+            old_lines = {line.strip().lower() for line in oldFile.readlines()}
+    except:
+        with open(old_file, "r", encoding=fallback_encoding(old_file)) as oldFile:
+            old_lines = {line.strip().lower() for line in oldFile.readlines()}
 
     print(f"{len(old_lines)} lines of previously found content")
     matching_lines = traverse_directory(path, domains_add)
