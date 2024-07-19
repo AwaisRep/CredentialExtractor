@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
     # Open the file as a raw binary to detect the encoding
     with open(old_file, "rb") as rawFile:
-        raw_data = rawFile.read()
+        raw_data = rawFile.read(1024)
         result = chardet.detect(raw_data)
         encoding = result['encoding']
 
