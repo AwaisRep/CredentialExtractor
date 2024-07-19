@@ -11,6 +11,16 @@ from typing import Union, Set, List
 max_threads = 10
 thread_semaphore = threading.Semaphore(max_threads)
 
+def detect_encoding(file_path): 
+    with open(file_path, 'rb') as file: 
+        detector = chardet.universaldetector.UniversalDetector() 
+        for line in file: 
+            detector.feed(line) 
+            if detector.done: 
+                break
+        detector.close() 
+    return detector.result['encoding'] 
+
 def extract_domain(email: str, domains: Union[Set[str], List[str]]) -> bool:
     ''' Simple function to determine if an email belongs to the desired domains '''
 
@@ -29,12 +39,7 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
     except ValueError:
         print("File name retrieval failed.")
 
-    with open(file_path, 'rb') as binaryFile:
-        fileData = binaryFile.read(1024)
-        contents = chardet.detect(fileData)
-        encoding_file = contents['encoding']
-
-    with open(file_path, 'r', encoding=encoding_file) as file:
+    with open(file_path, 'r', encoding=detect_encoding(file_path)) as file:
         try:
             lines = file.readlines()
             for line in lines:
@@ -96,14 +101,8 @@ if __name__ == '__main__':
     getDir = input("Enter directory to work on: \n")
     path = Path(getDir)
 
-    # Open the file as a raw binary to detect the encoding
-    with open(old_file, "rb") as rawFile:
-        raw_data = rawFile.read(1024)
-        result = chardet.detect(raw_data)
-        encoding = result['encoding']
-
     # Use the detected encoding to read the file and read the outdated lines
-    with open(old_file, "r", encoding=encoding) as oldFile:
+    with open(old_file, "r", encoding=detect_encoding(old_file)) as oldFile:
         old_lines = {line.strip().lower() for line in oldFile.readlines()}
 
     print(f"{len(old_lines)} lines of previously found content")
