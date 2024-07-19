@@ -29,7 +29,12 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
     except ValueError:
         print("File name retrieval failed.")
 
-    with open(file_path, 'r', encoding='utf-8') as file:
+    with open(file_path, 'rb') as binaryFile:
+        fileData = binaryFile.read()
+        contents = chardet.detect(fileData)
+        encoding_file = contents['encoding']
+
+    with open(file_path, 'r', encoding=encoding_file) as file:
         try:
             lines = file.readlines()
             for line in lines:
