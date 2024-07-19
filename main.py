@@ -57,7 +57,7 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
         print(f"Found {count} lines in file: {file_name}\n")
     except ValueError:
         print("Lines not handled due to previous exception")
-    
+
 
 def traverse_directory(directory: Path, domains: set) -> set:
     ''' Walk through the directory, uncover all text files and start a worker for each of them '''
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         # Output the final count that has never been found
         with open("output.txt", "w+", encoding="utf-8") as f:
             for line in matching_lines:
-                
+
                 email = line.split(":")[0]
                 if email.lower() in old_lines:
                     pass
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                     f.write(line + "\n")
                     old_lines.add(email)
                     final_count += 1
-    
+
     if old_lines:
         with open("remove.txt", "w+") as f:
             for line in old_lines:
