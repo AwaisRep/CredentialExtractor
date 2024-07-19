@@ -13,20 +13,20 @@ thread_semaphore = threading.Semaphore(max_threads)
 
 def detect_encoding(file_path): 
     with open(file_path, 'rb') as file: 
-        detector = chardet.universaldetector.UniversalDetector() 
-        for line in file: 
-            detector.feed(line) 
-            if detector.done: 
-                break
-        detector.close() 
-    return detector.result['encoding']
+        raw = file.read()
+        result = chardet.detect(raw)
 
-def fallback_encoding(file_path):
+    return result["encoding"]
     
-    with open(file_path, "rb") as rawFile:
-        rawData = rawFile.read()
-        result = chardet.detect(rawData)
-        return result['encoding']
+def extract_lines(file, matching_lines, domains, count):
+    lines = file.readlines()
+    for line in lines:
+        line = line.strip()
+        email = line.split(":")[0]
+
+        if extract_domain(email, domains): # If the email belongs to one of the domains
+            count += 1
+            matching_lines.add(line) # Add the credentials to the unique lines set
 
 def extract_domain(email: str, domains: Union[Set[str], List[str]]) -> bool:
     ''' Simple function to determine if an email belongs to the desired domains '''
@@ -46,27 +46,27 @@ def process_file(file_path: str, domains: Union[Set[str], List[str]], matching_l
     except ValueError:
         print("File name retrieval failed.")
 
-    with open(file_path, 'r', encoding=detect_encoding(file_path)) as file:
+
+    # First attempt at reading without an encoding lookup
+    try:
+        with open(file_path, 'r') as file:
+            extract_lines(file, matching_lines, domains, count)
+
+    # Lookup the encoding fully, before trying again
+    except Exception as e:
+        print(f"First attempt failed for {file_path}: {e}")
+
         try:
-            lines = file.readlines()
-            for line in lines:
-                line = line.strip()
-                email = line.split(":")[0]
+            with open(file_path, 'r', encoding=detect_encoding(file_path)) as file:
+                extract_lines(file, matching_lines, domains, count)
+        
+        # Log any errors upon second fail
+        except:
+            print(f"Issue with {file_path}: {e}\n")
 
-                if extract_domain(email, domains): # If the email belongs to one of the domains
-                    count += 1
-                    matching_lines.add(line) # Add the credentials to the unique lines set
-
-        # Log any errors when handling the file (generally char conversion issues)
-        except Exception as e:
-            print(f"Issue with {file_path}: {e}" + "\n")
             errorsFile = open("errors.txt", "a+")
             errorsFile.write(file_path + "\n")
             errorsFile.close()
-            try:
-                print(len(lines))
-            except:
-                pass
 
     # Release the semaphore to work on the next file if any
     thread_semaphore.release()
@@ -110,10 +110,10 @@ if __name__ == '__main__':
 
     # Use the detected encoding to read the file and read the outdated lines
     try:
-        with open(old_file, "r", encoding=detect_encoding(old_file)) as oldFile:
+        with open(old_file, "r") as oldFile:
             old_lines = {line.strip().lower() for line in oldFile.readlines()}
     except:
-        with open(old_file, "r", encoding=fallback_encoding(old_file)) as oldFile:
+        with open(old_file, "r", encoding=detect_encoding(old_file)) as oldFile:
             old_lines = {line.strip().lower() for line in oldFile.readlines()}
 
     print(f"{len(old_lines)} lines of previously found content")
