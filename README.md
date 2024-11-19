@@ -25,7 +25,7 @@ A short python script that uses multi-threading in order to extract all emails f
 2. Install the requirements using pip as such:
 
     ```console
-    pip install requirements.txt
+    pip install -r requirements.txt
     ```
    Only chardet is required to run this program, so alternatively, you may run this command:
 
