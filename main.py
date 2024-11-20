@@ -119,12 +119,12 @@ if __name__ == '__main__':
 
     print(f"{len(old_lines)} lines of previously found content")
     matching_lines = traverse_directory(path, domains_add)
+    final_count = 0
 
     # Write matching lines to the output file
     if matching_lines:
         print(f"\nAttempting to add {len(matching_lines)} lines to the output file...")
 
-        final_count = 0
         # Output the final count that has never been found
         with open("output.txt", "w+", encoding="utf-8") as f:
             for line in matching_lines:
